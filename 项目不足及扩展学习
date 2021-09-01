@@ -1,0 +1,9 @@
+项目的独立性不足：
+不足：当前实现的项目中我们并没有完全脱离malloc，比如在内存池自身数据结构的管理中，如SpanList中的span等结构，我们还是使用的new Span这样的操作，new的底层使用的是malloc，所以还不足以替换malloc，因为们本身没有完全脱离它。
+解决方案：项目中增加一个定长的ObjectPool的对象池，对象池的内存直接使用brk、VirarulAlloc等向系统申请，new Span替换成对象池申请内存。这样就完全脱离的malloc，就可以替换掉malloc。
+平台及兼容性：
+linux等系统下面，需要将VirtualAlloc替换为brk等。
+x64系统下面，当前的实现支持不足。比如：id查找Span得到的映射，我们当前使用的是map<id,
+Span*>。在64位系统下面，这个数据结构在性能和内存等方面都是撑不住。需要改进后基数树。
+具体参考：基数树(radix tree) https://blog.csdn.net/weixin_36145588/article/details/78365480
+————————————————
